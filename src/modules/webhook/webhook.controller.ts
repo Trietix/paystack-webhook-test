@@ -14,10 +14,13 @@ export const testWebhook = catchAsync(async (req: Request, res: Response) => {
     //validate event
     const hash = crypto.createHmac('sha512', "sk_test_87e1178e601bb34991a96c9e9008a691fb8ee414").update(JSON.stringify(req.body)).digest('hex');
     if (hash == req.headers['x-paystack-signature']) {
-    // Retrieve the request's body
-    const event = req.body;
-    // Do something with event
-    console.log(event);  
+        // Retrieve the request's body
+        const event = req.body;
+        // Do something with event
+        console.log("Payment type: ", event.event)
+        console.log("Customer Email: ", event.customer.email);
+        console.log("Amount: ", event.data.requested_amount);
+        console.log(event);  
     }
     res.send(200);
 //   const webhook = await webhookService.testWebhook(req.body);

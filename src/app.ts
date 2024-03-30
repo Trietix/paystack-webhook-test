@@ -11,7 +11,6 @@ import { morgan } from "./modules/logger";
 import cookieParser from "cookie-parser";
 import routes from './routes';
 import { ApiError, errorConverter, errorHandler } from "./modules/errors";
-
 const app: Express = express();
 
 if (config.env !== "test") {
