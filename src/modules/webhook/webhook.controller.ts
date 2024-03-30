@@ -18,7 +18,7 @@ export const testWebhook = catchAsync(async (req: Request, res: Response) => {
         const event = req.body;
         // Do something with event
         console.log("Payment type: ", event.event)
-        console.log("Customer Email: ", event.customer.email);
+        console.log("Customer Email: ", event.data.customer.email);
         console.log("Amount: ", event.data.requested_amount);
         console.log(event);  
     }
