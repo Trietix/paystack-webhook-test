@@ -1,0 +1,22 @@
+export const photos = [
+    "Abby",
+    "Zoey",
+    "Angel",
+    "Lucky",
+    "George",
+    "Fluffy",
+    "Boots",
+    "Boo",
+    "Coco",
+    "Bear",
+    "Felix",
+    "Maggie",
+    "Bob",
+    "Loki",
+    "Cleo",
+    "Cuddles",
+    "Dusty",
+    "Kitty",
+    "Ginger",
+    "Annie"
+];
