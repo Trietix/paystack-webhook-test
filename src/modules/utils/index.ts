@@ -4,6 +4,7 @@ import catchAsync from './catchAsync';
 import pick from './pick';
 import config from '../../config/config'
 import authLimiter from './rateLimiter';
+import amqplib from 'amqplib';
 
 function generateRandomAlphanumericWord(length: number): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -58,4 +59,22 @@ const getCookieDomain = (req: Request) => {
   }
 };
 
-export { catchAsync, pick, authLimiter, getCookieDomain, generateRandomAlphanumericWord, checkRights };
+const createChannel = async () => {
+  try {
+    const connection = await amqplib.connect(config.rabbitmq.url);
+    const channel = await connection.createChannel();
+    // @ts-ignore
+    await channel.assertQueue(config.message.exchangeName, "direct", { durable: true });
+    return channel;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const publishMessage = (channel: any, queue: string, service: string, msg: any) => {
+  // channel.publish(config.message.exchangeName, service, Buffer.from(msg));
+  channel.sendToQueue(queue, service, Buffer.from(msg));
+  console.log("Sent: ", msg);
+};
+
+export { catchAsync, pick, authLimiter, getCookieDomain, generateRandomAlphanumericWord, checkRights, createChannel, publishMessage };

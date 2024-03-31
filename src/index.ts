@@ -7,6 +7,7 @@ export const convertMBToByte = (mb: number): number => mb * 1024 * 1024;
 
 let server: any;
 export let io: any;
+
 server = app.listen(config.port, () => {
   logger.info(`Paystack webhook test listening to port ${config.port}`);
 });

@@ -2,13 +2,14 @@
 import { Request, Response } from 'express';
 // import mongoose from 'mongoose';
 import catchAsync from '../utils/catchAsync';
-// import config from '../../config/config';
+import config from '../../config/config';
 // import ApiError from '../errors/ApiError';
 // import pick from '../utils/pick';
 // import { IOptions } from '../paginate/paginate';
 // import * as webhookService from './webhook.service';
 // import redisClient from '../utils/redis';
 import crypto from 'crypto';
+import { createChannel, publishMessage } from '../utils';
 
 export const testWebhook = catchAsync(async (req: Request, res: Response) => {
     //validate event
@@ -18,9 +19,14 @@ export const testWebhook = catchAsync(async (req: Request, res: Response) => {
         const event = req.body;
         // Do something with event
         console.log("Payment type: ", event.event)
-        console.log("Customer Email: ", event.data.customer);
+        console.log("Customer Email: ", event.data.customer.email);
         console.log("Amount: ", event.data.requested_amount);
         console.log(event);  
+        if(event.event === "charge.success"){
+            createChannel().then((res)=>{
+                publishMessage(res, 'ticketPurchase', config.services.email, JSON.stringify(event))
+            })
+        }
     }
     res.send(200);
 //   const webhook = await webhookService.testWebhook(req.body);
