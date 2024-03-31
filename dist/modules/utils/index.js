@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkRights = exports.generateRandomAlphanumericWord = exports.getCookieDomain = exports.authLimiter = exports.pick = exports.catchAsync = void 0;
+exports.publishMessage = exports.createChannel = exports.checkRights = exports.generateRandomAlphanumericWord = exports.getCookieDomain = exports.authLimiter = exports.pick = exports.catchAsync = void 0;
 const errors_1 = require("../errors");
 const catchAsync_1 = __importDefault(require("./catchAsync"));
 exports.catchAsync = catchAsync_1.default;
@@ -12,6 +12,7 @@ exports.pick = pick_1.default;
 const config_1 = __importDefault(require("../../config/config"));
 const rateLimiter_1 = __importDefault(require("./rateLimiter"));
 exports.authLimiter = rateLimiter_1.default;
+const amqplib_1 = __importDefault(require("amqplib"));
 function generateRandomAlphanumericWord(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -70,4 +71,23 @@ const getCookieDomain = (req) => {
     }
 };
 exports.getCookieDomain = getCookieDomain;
+const createChannel = async () => {
+    try {
+        const connection = await amqplib_1.default.connect(config_1.default.rabbitmq.url);
+        const channel = await connection.createChannel();
+        // @ts-ignore
+        await channel.assertQueue(config_1.default.message.exchangeName, "direct", { durable: true });
+        return channel;
+    }
+    catch (err) {
+        throw err;
+    }
+};
+exports.createChannel = createChannel;
+const publishMessage = (channel, queue, service, msg) => {
+    // channel.publish(config.message.exchangeName, service, Buffer.from(msg));
+    channel.sendToQueue(queue, service, Buffer.from(msg));
+    console.log("Sent: ", msg);
+};
+exports.publishMessage = publishMessage;
 //# sourceMappingURL=index.js.map

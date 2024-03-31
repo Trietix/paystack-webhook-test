@@ -6,13 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.testWebhook = void 0;
 // import mongoose from 'mongoose';
 const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
-// import config from '../../config/config';
+const config_1 = __importDefault(require("../../config/config"));
 // import ApiError from '../errors/ApiError';
 // import pick from '../utils/pick';
 // import { IOptions } from '../paginate/paginate';
 // import * as webhookService from './webhook.service';
 // import redisClient from '../utils/redis';
 const crypto_1 = __importDefault(require("crypto"));
+const utils_1 = require("../utils");
 exports.testWebhook = (0, catchAsync_1.default)(async (req, res) => {
     //validate event
     const hash = crypto_1.default.createHmac('sha512', "sk_test_87e1178e601bb34991a96c9e9008a691fb8ee414").update(JSON.stringify(req.body)).digest('hex');
@@ -21,9 +22,14 @@ exports.testWebhook = (0, catchAsync_1.default)(async (req, res) => {
         const event = req.body;
         // Do something with event
         console.log("Payment type: ", event.event);
-        console.log("Customer Email: ", event.data.customer);
+        console.log("Customer Email: ", event.data.customer.email);
         console.log("Amount: ", event.data.requested_amount);
         console.log(event);
+        if (event.event === "charge.success") {
+            (0, utils_1.createChannel)().then((res) => {
+                (0, utils_1.publishMessage)(res, 'ticketPurchase', config_1.default.services.email, JSON.stringify(event));
+            });
+        }
     }
     res.send(200);
     //   const webhook = await webhookService.testWebhook(req.body);
