@@ -73,8 +73,14 @@ const createChannel = async () => {
 
 const publishMessage = (channel: any, queue: string, service: string, msg: any) => {
   // channel.publish(config.message.exchangeName, service, Buffer.from(msg));
-  channel.sendToQueue(queue, service, Buffer.from(msg));
+  channel.sendToQueue(queue, Buffer.from(msg));
   console.log("Sent: ", msg);
 };
 
-export { catchAsync, pick, authLimiter, getCookieDomain, generateRandomAlphanumericWord, checkRights, createChannel, publishMessage };
+const removeTrailingZeros = (num : number) => {
+  let numStr: string = num.toString();
+  numStr = numStr.replace(/00$/, '');
+  return parseFloat(numStr);
+}
+
+export { catchAsync, pick, authLimiter, getCookieDomain, generateRandomAlphanumericWord, checkRights, createChannel, publishMessage, removeTrailingZeros };

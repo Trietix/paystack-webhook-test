@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.publishMessage = exports.createChannel = exports.checkRights = exports.generateRandomAlphanumericWord = exports.getCookieDomain = exports.authLimiter = exports.pick = exports.catchAsync = void 0;
+exports.removeTrailingZeros = exports.publishMessage = exports.createChannel = exports.checkRights = exports.generateRandomAlphanumericWord = exports.getCookieDomain = exports.authLimiter = exports.pick = exports.catchAsync = void 0;
 const errors_1 = require("../errors");
 const catchAsync_1 = __importDefault(require("./catchAsync"));
 exports.catchAsync = catchAsync_1.default;
@@ -86,8 +86,14 @@ const createChannel = async () => {
 exports.createChannel = createChannel;
 const publishMessage = (channel, queue, service, msg) => {
     // channel.publish(config.message.exchangeName, service, Buffer.from(msg));
-    channel.sendToQueue(queue, service, Buffer.from(msg));
+    channel.sendToQueue(queue, Buffer.from(msg));
     console.log("Sent: ", msg);
 };
 exports.publishMessage = publishMessage;
+const removeTrailingZeros = (num) => {
+    let numStr = num.toString();
+    numStr = numStr.replace(/00$/, '');
+    return parseFloat(numStr);
+};
+exports.removeTrailingZeros = removeTrailingZeros;
 //# sourceMappingURL=index.js.map

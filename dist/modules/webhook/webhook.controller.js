@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.testWebhook = void 0;
 // import mongoose from 'mongoose';
 const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
-const config_1 = __importDefault(require("../../config/config"));
+// import config from '../../config/config';
 // import ApiError from '../errors/ApiError';
 // import pick from '../utils/pick';
 // import { IOptions } from '../paginate/paginate';
@@ -26,11 +26,13 @@ exports.testWebhook = (0, catchAsync_1.default)(async (req, res) => {
         console.log("Amount: ", event.data.requested_amount);
         console.log(event);
         if (event.event === "charge.success") {
-            (0, utils_1.createChannel)().then((res) => {
-                (0, utils_1.publishMessage)(res, 'ticketPurchase', config_1.default.services.email, JSON.stringify(event));
-            });
         }
     }
+    (0, utils_1.createChannel)().then((res) => {
+        // let message = JSON.stringify(req.body);
+        res.sendToQueue('ticketPurchase', Buffer.from(JSON.stringify(req.body)));
+        // publishMessage(res, 'ticketPurchase', config.services.email, JSON.stringify(req.body))
+    });
     res.send(200);
     //   const webhook = await webhookService.testWebhook(req.body);
     //   res.status(httpStatus.CREATED).send(webhook);
